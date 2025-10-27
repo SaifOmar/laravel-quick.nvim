@@ -1,4 +1,4 @@
-# `.nvim`
+# `Laravel-quick.nvim`
 
 An easy and simple way to run artisan commands in Neovim real "quick".
 
