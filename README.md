@@ -30,6 +30,8 @@
     end,
 }
 
+
+```
 ## ⚙️ Setup
 require("quick").setup({
     -- optional settings can go here
