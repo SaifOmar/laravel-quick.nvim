@@ -21,7 +21,7 @@
 
 ```lua
 {
-    'SaiOmar/laravel-quick.nvim',
+    'SaifOmar/laravel-quick.nvim',
     dependencies = {
         'nvim-telescope/telescope.nvim',
     },
