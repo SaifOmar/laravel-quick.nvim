@@ -1,37 +1,36 @@
-# `Laravel-quick.nvim`
+# 🌀 Laravel Quick.nvim
 
-An easy and simple way to run artisan commands in Neovim real "quick".
+> **Run Laravel Artisan commands directly from Neovim — instantly, intuitively, and beautifully.**
 
-# Notes
+`laravel-quick.nvim` gives you a quick floating interface to browse, search, and run Artisan commands inside your Laravel projects — all without leaving Neovim.
 
-This will be cleaned up later.
+---
 
-# Setup
+## ✨ Features
 
-```lua
-require("quick").setup {
-}
-```
+- 🔍 **Floating Command Palette** – Browse and run Artisan commands in a floating window.
+- ⚡ **Instant Search** – Uses [Telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) for fuzzy searching through available commands.
+- 🔄 **Command Cache Refresh** – Quickly refresh your Artisan command list.
+- 🧠 **Smart Detection** – Works only inside Laravel projects (so it stays out of your way elsewhere).
 
-# Features
+---
 
-- Opens a floating window with a list of artisan commands.
-- Allows you to search and run artisan commands from the floating window.
-- Can refresh the cache of artisan commands if you need to.
+## 📦 Installation
 
-# Installation
-
-### [lazy.nvim](https://github.com/folke/lazy.nvim)
+### Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
 {
     'SaiOmar/laravel-quick.nvim',
+    dependencies = {
+        'nvim-telescope/telescope.nvim',
+    },
+    config = function()
+        require('quick').setup()
+    end,
 }
-```
 
-# Usage
-
-Use `:Artisan` inside a Laravel project to open a floating window with a list of artisan commands.
-Use `:ArtisanRefresh` inside a Laravel project to refresh the cache of artisan commands.
-
-
+## ⚙️ Setup
+require("quick").setup({
+    -- optional settings can go here
+})

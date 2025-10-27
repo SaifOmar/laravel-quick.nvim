@@ -251,93 +251,93 @@ M.refresh_artisan_cache = function()
 	M.fetch_artisan_commands()
 end
 
-M.go_to_laravel_directory = function()
-	-- we need to check if I am on wsl or on windows then use the correct path
-	--  windows_path = "E:\\dev\\laravel"
-	-- wsl_path = "~/dev/laravel"
-	local is_wsl = vim.fn.has("wsl") == 1
-
-	local laravel_path = ""
-	if is_wsl then
-		-- WSL path
-		laravel_path = "~/dev/laravel"
-	else
-		-- Windows path
-		laravel_path = "E:\\dev\\laravel"
-	end
-	-- now change directory the larvel path
-	vim.cmd("cd " .. laravel_path)
-
-	if not has_telescope then
-		vim.notify("Telescope is not installed", vim.log.levels.ERROR)
-		return
-	end
-
-	local projects = vim.fn.split(vim.fn.glob(laravel_path .. "/*"), "\n")
-
-	-- Filter to only include directories
-	local project_dirs = {}
-	for _, project in ipairs(projects) do
-		if vim.fn.isdirectory(project) == 1 then
-			table.insert(project_dirs, project)
-		end
-	end
-
-	-- Create a table to store the project names for display
-	local project_names = {}
-	for _, project in ipairs(project_dirs) do
-		-- Get the name of the project
-		local name = vim.fn.fnamemodify(project, ":t")
-		table.insert(project_names, name)
-	end
-
-	-- Exit if no projects found
-	if #project_names == 0 then
-		vim.notify("No Laravel projects found in " .. laravel_path, vim.log.levels.WARN)
-		return
-	end
-	pickers
-		.new({}, {
-			prompt_title = "Laravel Projects",
-			finder = finders.new_table({
-				results = project_names,
-				entry_maker = function(entry)
-					return {
-						value = entry,
-						display = entry,
-						ordinal = entry,
-					}
-				end,
-			}),
-			sorter = conf.values.generic_sorter({}),
-			attach_mappings = function(prompt_bufnr, map)
-				actions.select_default:replace(function()
-					local selection = actions_state.get_selected_entry(prompt_bufnr)
-					actions.close(prompt_bufnr)
-					if selection then
-						-- Find the full path for the selected project
-						local selected_project = nil
-						for _, project in ipairs(project_dirs) do
-							if vim.fn.fnamemodify(project, ":t") == selection.value then
-								selected_project = project
-								break
-							end
-						end
-
-						if selected_project then
-							-- Change directory to the selected project
-							vim.cmd("cd " .. selected_project)
-							vim.notify("Changed to project: " .. selection.value, vim.log.levels.INFO)
-							vim.cmd("Telescope find_files")
-							-- vim.cmd("Ex" .. selected_project)
-						end
-					end
-				end)
-				return true
-			end,
-		})
-		:find()
-end
+-- M.go_to_laravel_directory = function()
+-- 	-- we need to check if I am on wsl or on windows then use the correct path
+-- 	--  windows_path = "E:\\dev\\laravel"
+-- 	-- wsl_path = "~/dev/laravel"
+-- 	local is_wsl = vim.fn.has("wsl") == 1
+--
+-- 	local laravel_path = ""
+-- 	if is_wsl then
+-- 		-- WSL path
+-- 		laravel_path = "~/dev/laravel"
+-- 	else
+-- 		-- Windows path
+-- 		laravel_path = "E:\\dev\\laravel"
+-- 	end
+-- 	-- now change directory the larvel path
+-- 	vim.cmd("cd " .. laravel_path)
+--
+-- 	if not has_telescope then
+-- 		vim.notify("Telescope is not installed", vim.log.levels.ERROR)
+-- 		return
+-- 	end
+--
+-- 	local projects = vim.fn.split(vim.fn.glob(laravel_path .. "/*"), "\n")
+--
+-- 	-- Filter to only include directories
+-- 	local project_dirs = {}
+-- 	for _, project in ipairs(projects) do
+-- 		if vim.fn.isdirectory(project) == 1 then
+-- 			table.insert(project_dirs, project)
+-- 		end
+-- 	end
+--
+-- 	-- Create a table to store the project names for display
+-- 	local project_names = {}
+-- 	for _, project in ipairs(project_dirs) do
+-- 		-- Get the name of the project
+-- 		local name = vim.fn.fnamemodify(project, ":t")
+-- 		table.insert(project_names, name)
+-- 	end
+--
+-- 	-- Exit if no projects found
+-- 	if #project_names == 0 then
+-- 		vim.notify("No Laravel projects found in " .. laravel_path, vim.log.levels.WARN)
+-- 		return
+-- 	end
+-- 	pickers
+-- 		.new({}, {
+-- 			prompt_title = "Laravel Projects",
+-- 			finder = finders.new_table({
+-- 				results = project_names,
+-- 				entry_maker = function(entry)
+-- 					return {
+-- 						value = entry,
+-- 						display = entry,
+-- 						ordinal = entry,
+-- 					}
+-- 				end,
+-- 			}),
+-- 			sorter = conf.values.generic_sorter({}),
+-- 			attach_mappings = function(prompt_bufnr, map)
+-- 				actions.select_default:replace(function()
+-- 					local selection = actions_state.get_selected_entry(prompt_bufnr)
+-- 					actions.close(prompt_bufnr)
+-- 					if selection then
+-- 						-- Find the full path for the selected project
+-- 						local selected_project = nil
+-- 						for _, project in ipairs(project_dirs) do
+-- 							if vim.fn.fnamemodify(project, ":t") == selection.value then
+-- 								selected_project = project
+-- 								break
+-- 							end
+-- 						end
+--
+-- 						if selected_project then
+-- 							-- Change directory to the selected project
+-- 							vim.cmd("cd " .. selected_project)
+-- 							vim.notify("Changed to project: " .. selection.value, vim.log.levels.INFO)
+-- 							vim.cmd("Telescope find_files")
+-- 							-- vim.cmd("Ex" .. selected_project)
+-- 						end
+-- 					end
+-- 				end)
+-- 				return true
+-- 			end,
+-- 		})
+-- 		:find()
+-- end
 
 -- installs laravel ide helper
 M.get_laravel_ide_helper = function()
@@ -366,13 +366,13 @@ M.generate_models_helpers = function()
 	vim.cmd("terminal " .. cmd)
 end
 
-M.add_ide_helper_to_gitignore = function()
-	if not M.get_artisan_path() then
-		return
-	end
-	local cmd = 'echo "_ide_helper.php" >> .gitignore  echo "_ide_helper_models.php" >> .gitignore'
-	vim.cmd("terminal " .. cmd)
-end
+-- M.add_ide_helper_to_gitignore = function()
+-- 	if not M.get_artisan_path() then
+-- 		return
+-- 	end
+-- 	local cmd = 'echo "_ide_helper.php" >> .gitignore  echo "_ide_helper_models.php" >> .gitignore'
+-- 	vim.cmd("terminal " .. cmd)
+-- end
 
 M.generate_dot_env_file = function()
 	if not M.get_artisan_path() then
