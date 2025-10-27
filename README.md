@@ -30,12 +30,15 @@
     end,
 }
 
-
 ```
+
+```lua
 ## ⚙️ Setup
 require("quick").setup({
     -- optional settings can go here
 })
+```
 ## 📝 Commands
   `:Artisan` – Opens the floating command palette.
+
   `:ArtisanRefresh` – Refreshes the Artisan command list.
