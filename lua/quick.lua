@@ -210,7 +210,14 @@ M.make_action_file = function(path)
 	local parts = vim.split(path, "/")
 	-- this is the lua way of getting the last element of a table
 	local action_name = parts[#parts]
+	-- capitalize the first letter of the action name
+	action_name = string.upper(string.sub(action_name, 1, 1)) .. string.sub(action_name, 2)
+	-- capitalize the first letter of each part of the path
+	for i, part in ipairs(parts) do
+		parts[i] = string.upper(string.sub(part, 1, 1)) .. string.sub(part, 2)
+	end
 	local extra = table.concat(parts, "/", 1, #parts - 1)
+
 	local action_directory = root .. "/app/Actions/" .. extra
 	if vim.fn.isdirectory(action_directory) == 0 then
 		vim.fn.mkdir(action_directory, "p")
