@@ -172,6 +172,59 @@ M.run_artisan_command = function(command)
 	end
 end
 
+M.make_action = function()
+	vim.ui.input({ prompt = "Enter the name of the action: " }, function(input)
+		if input and input ~= "" then
+			M.make_action_file(input)
+		end
+	end)
+end
+
+M._action_template = [[<?php
+
+namespace App\Actions;
+
+
+class {{action_name}}
+{
+}]]
+
+M.make_action_file = function(action_name)
+	local artisan_path = M.get_artisan_path()
+	if not artisan_path then
+		return
+	end
+	-- i don't know if we need this
+	-- but let's see
+	local path = vim.fn.getcwd()
+	local action_directory = path .. "/app/Actions/"
+	if action_name ~= nil then
+		local start_index, end_index = string.find(action_name, "/")
+		if start_index ~= end_index then
+			vim.notify("Invalid action name", vim.log.levels.ERROR)
+			return false
+		end
+		if start_index ~= nil then
+			action_name = string.sub(action_name, start_index + 1)
+			action_directory = action_directory .. string.sub(action_name, 0, end_index)
+		end
+		if vim.fn.isdirectory(action_directory) == 0 then
+			vim.fn.mkdir(action_directory, "p")
+		end
+		local file_path = action_directory .. "/" .. action_name .. ".php"
+		local file = io.open(file_path, "w")
+		if file then
+			local string = M._action_template:gsub("{{action_name}}", action_name)
+			file:write(string)
+			vim.notify("Action file created successfully", vim.log.levels.INFO, { title = "Laravel Quick" })
+		else
+			vim.notify("Action file creation failed ", vim.log.levels.ERROR, { title = "Laravel Quick" })
+			return false
+		end
+	end
+	return true
+end
+
 --------------------------------------------------------------------------------
 -- Opens a searchable picker for Artisan commands using Telescope (or a fallback).
 --------------------------------------------------------------------------------
