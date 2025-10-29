@@ -182,47 +182,51 @@ end
 
 M._action_template = [[<?php
 
-namespace App\Actions;
+namespace App\Actions{{extra}};
 
 
 class {{action_name}}
 {
 }]]
 
-M.make_action_file = function(action_name)
-	local artisan_path = M.get_artisan_path()
-	if not artisan_path then
+M.get_laravel_root = function()
+	local artisan = M.get_artisan_path()
+	if not artisan then
+		return nil
+	end
+
+	return vim.fn.fnamemodify(artisan, ":h")
+end
+
+-- TODO: optimize
+M.make_action_file = function(path)
+	local root = M.get_laravel_root()
+	if not root then
+		vim.notify("Please make sure you are in a Laravel project", vim.log.levels.ERROR, { title = "Laravel Quick" })
 		return
 	end
-	-- i don't know if we need this
-	-- but let's see
-	local path = vim.fn.getcwd()
-	local action_directory = path .. "/app/Actions/"
-	if action_name ~= nil then
-		local start_index, end_index = string.find(action_name, "/")
-		if start_index ~= end_index then
-			vim.notify("Invalid action name", vim.log.levels.ERROR)
-			return false
-		end
-		if start_index ~= nil then
-			action_name = string.sub(action_name, start_index + 1)
-			action_directory = action_directory .. string.sub(action_name, 0, end_index)
-		end
-		if vim.fn.isdirectory(action_directory) == 0 then
-			vim.fn.mkdir(action_directory, "p")
-		end
-		local file_path = action_directory .. "/" .. action_name .. ".php"
-		local file = io.open(file_path, "w")
-		if file then
-			local string = M._action_template:gsub("{{action_name}}", action_name)
-			file:write(string)
-			vim.notify("Action file created successfully", vim.log.levels.INFO, { title = "Laravel Quick" })
-		else
-			vim.notify("Action file creation failed ", vim.log.levels.ERROR, { title = "Laravel Quick" })
-			return false
-		end
+	path = path:gsub("%.php$", "")
+	path = path:gsub("\\", "/")
+	local parts = vim.split(path, "/")
+	-- this is the lua way of getting the last element of a table
+	local action_name = parts[#parts]
+	local extra = table.concat(parts, "/", 1, #parts - 1)
+	local action_directory = root .. "/app/Actions/" .. extra
+	if vim.fn.isdirectory(action_directory) == 0 then
+		vim.fn.mkdir(action_directory, "p")
 	end
-	return true
+	local file_path = action_directory .. "/" .. action_name .. ".php"
+	local file = io.open(file_path, "w")
+	if file then
+		local string = M._action_template:gsub("{{action_name}}", action_name)
+		extra = extra:gsub("/", "\\")
+		string = string:gsub("{{extra}}", "\\" .. extra)
+		file:write(string)
+		vim.notify("Action file created successfully", vim.log.levels.INFO, { title = "Laravel Quick" })
+	else
+		vim.notify("Action file creation failed ", vim.log.levels.ERROR, { title = "Laravel Quick" })
+		return false
+	end
 end
 
 --------------------------------------------------------------------------------
