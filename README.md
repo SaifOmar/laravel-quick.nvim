@@ -42,3 +42,5 @@ require("quick").setup({
   `:Artisan` – Opens the floating command palette.
 
   `:ArtisanRefresh` – Refreshes the Artisan command list.
+  
+  `:MakeAction` - Open ui input to make Action class.
