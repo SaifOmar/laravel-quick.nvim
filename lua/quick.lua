@@ -220,7 +220,11 @@ M.make_action_file = function(path)
 	if file then
 		local string = M._action_template:gsub("{{action_name}}", action_name)
 		extra = extra:gsub("/", "\\")
-		string = string:gsub("{{extra}}", "\\" .. extra)
+		if extra ~= "" then
+			string = string:gsub("{{extra}}", "\\" .. extra)
+		else
+			string = string:gsub("{{extra}}", "")
+		end
 		file:write(string)
 		vim.notify("Action file created successfully", vim.log.levels.INFO, { title = "Laravel Quick" })
 	else
